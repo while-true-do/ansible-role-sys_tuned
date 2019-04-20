@@ -1,0 +1,74 @@
+---
+# tasks file for while_true_do.sys_tuned
+
+- name: Include distribution Tasks
+  include_tasks: "{{ ansible_distribution }}.yml"
+
+- name: Manage tuned Packages
+  package:
+    name: "{{ wtd_sys_tuned_packages }}"
+    state: "{{ wtd_sys_tuned_packages_state }}"
+  become: true
+  tags:
+    - tuned
+    - package
+
+- name: Manage tuned Service
+  service:
+    name: "{{ wtd_sys_tuned_service }}"
+    state: "{{ wtd_sys_tuned_service_state }}"
+    enabled: "{{ wtd_sys_tuned_service_enabled }}"
+  become: true
+  when: wtd_sys_tuned_packages_state != "absent"
+  tags:
+    - tuned
+    - service
+
+- name: Get tuned profile_mode
+  shell: /usr/sbin/tuned-adm profile_mode | grep -q "auto"
+  register: wtd_sys_tuned_profile_mode
+  changed_when: false
+  ignore_errors: true
+  failed_when: false
+  become: true
+  when: wtd_sys_tuned_packages_state != "absent" and
+        wtd_sys_tuned_profile == "auto"
+  tags:
+    - tuned
+    - profile
+
+- name: Set tuned profile_mode (auto)
+  command: /usr/sbin/tuned-adm auto_profile
+  changed_when: wtd_sys_tuned_profile_mode.rc == 1
+  ignore_errors: true
+  become: true
+  when: wtd_sys_tuned_profile == "auto" and
+        wtd_sys_tuned_profile_mode.rc == 1 and
+        wtd_sys_tuned_packages_state != "absent"
+  tags:
+    - tuned
+    - profile
+
+- name: Get tuned profile
+  shell: /usr/sbin/tuned-adm active | grep "{{ wtd_sys_tuned_profile }}"
+  register: wtd_sys_tuned_profile_active
+  changed_when: false
+  ignore_errors: true
+  failed_when: false
+  become: true
+  when: wtd_sys_tuned_profile != "auto" and
+        wtd_sys_tuned_packages_state != "absent"
+  tags:
+    - tuned
+    - profile
+
+- name: Set tuned profile
+  command: /usr/sbin/tuned-adm profile "{{ wtd_sys_tuned_profile }}"
+  changed_when: wtd_sys_tuned_profile_active.rc == 1
+  become: true
+  when: wtd_sys_tuned_profile != "auto" and
+        wtd_sys_tuned_profile_active.rc == 1 and
+        wtd_sys_tuned_packages_state != "absent"
+  tags:
+    - tuned
+    - profile
