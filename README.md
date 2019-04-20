@@ -20,7 +20,7 @@ license: BSD-3-Clause
 
 # Ansible Role: sys_tuned
 
-An Ansible Role to install and configured [tuned](https://tuned-project.org/).
+An Ansible Role to install and configure [tuned](https://tuned-project.org/).
 
 ## Motivation
 
