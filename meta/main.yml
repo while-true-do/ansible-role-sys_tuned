@@ -25,5 +25,6 @@ galaxy_info:
     - tuned
     - package
     - service
+    - system
 
 dependencies: []
