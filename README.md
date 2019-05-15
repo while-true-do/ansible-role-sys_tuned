@@ -93,6 +93,13 @@ can be done in a
     - role: while_true_do.sys_tuned
 ```
 
+## Known Issues
+
+1.  RedHat Testing is currently not possible in public, due to limitations
+    in subscriptions.
+2.  Some services and features cannot be tested properly, due to limitations
+    in docker.
+
 ## Testing
 
 Most of the "generic" tests are located in the
