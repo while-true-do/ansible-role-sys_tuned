@@ -1,9 +1,6 @@
 ---
 # tasks file for while_true_do.sys_tuned
 
-- name: Include distribution Tasks
-  include_tasks: "{{ ansible_distribution }}.yml"
-
 - name: Manage tuned Packages
   package:
     name: "{{ wtd_sys_tuned_packages }}"
@@ -19,7 +16,8 @@
     state: "{{ wtd_sys_tuned_service_state }}"
     enabled: "{{ wtd_sys_tuned_service_enabled }}"
   become: true
-  when: wtd_sys_tuned_packages_state != "absent"
+  when:
+    - wtd_sys_tuned_packages_state != "absent"
   tags:
     - tuned
     - service
@@ -31,20 +29,9 @@
   ignore_errors: true
   failed_when: false
   become: true
-  when: wtd_sys_tuned_packages_state != "absent" and
-        wtd_sys_tuned_profile == "auto"
-  tags:
-    - tuned
-    - profile
-
-- name: Set tuned profile_mode (auto)
-  command: /usr/sbin/tuned-adm auto_profile
-  changed_when: wtd_sys_tuned_profile_mode.rc == 1
-  ignore_errors: true
-  become: true
-  when: wtd_sys_tuned_profile == "auto" and
-        wtd_sys_tuned_profile_mode.rc == 1 and
-        wtd_sys_tuned_packages_state != "absent"
+  when:
+    - wtd_sys_tuned_packages_state != "absent"
+    - wtd_sys_tuned_profile == "auto"
   tags:
     - tuned
     - profile
@@ -56,8 +43,9 @@
   ignore_errors: true
   failed_when: false
   become: true
-  when: wtd_sys_tuned_profile != "auto" and
-        wtd_sys_tuned_packages_state != "absent"
+  when:
+    - wtd_sys_tuned_packages_state != "absent"
+    - wtd_sys_tuned_profile != "auto"
   tags:
     - tuned
     - profile
@@ -66,9 +54,10 @@
   command: /usr/sbin/tuned-adm profile "{{ wtd_sys_tuned_profile }}"
   changed_when: wtd_sys_tuned_profile_active.rc == 1
   become: true
-  when: wtd_sys_tuned_profile != "auto" and
-        wtd_sys_tuned_profile_active.rc == 1 and
-        wtd_sys_tuned_packages_state != "absent"
+  when:
+    - wtd_sys_tuned_packages_state != "absent"
+    - wtd_sys_tuned_profile != "auto"
+    - wtd_sys_tuned_profile_active.rc == 1
   tags:
     - tuned
     - profile

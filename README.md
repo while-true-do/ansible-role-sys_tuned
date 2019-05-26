@@ -59,21 +59,22 @@ git clone https://github.com/while-true-do/ansible-role-sys_tuned.git while_true
 ---
 # defaults file for while_true_do.sys_tuned
 
-# Additional profile packages are possible
+## Package Management
 wtd_sys_tuned_packages:
   - tuned
   - tuned-profiles-cpu-partitioning
 # State can be present|latest|absent
 wtd_sys_tuned_packages_state: "present"
 
+## Service Management
 wtd_sys_tuned_service: "tuned"
 # State can be started|stopped|restarted
 wtd_sys_tuned_service_state: "started"
 wtd_sys_tuned_service_enabled: true
 
+## Configuration Management
 # Which profile to use
 # auto|balanced|virt-guest|powersave|hpc-compute|desktop|etc...
-# check with "tuned-adm list"
 wtd_sys_tuned_profile: "auto"
 ```
 
